@@ -60,7 +60,7 @@ filterUnitList square = filter (containsElem square) unitList
 
 units :: [(String, [[String]])]
 units = 
-    let step1 = map filterUnitList board
+    let step1 = map filterUnitList board 
     in zip board step1 
 
 foldList :: [[a]] -> [a]
