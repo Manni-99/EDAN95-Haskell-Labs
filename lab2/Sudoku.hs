@@ -80,6 +80,7 @@ fromMaybe def (Just x) = x
 getPeers :: String -> [String]
 getPeers s = fromMaybe [] (lookup s peers)
 
+-- JustifyList takes in an array of type maybe and returns a regular array without Maybe keywords and its peers.
 justifyList :: [Maybe a] -> [a]
 justifyList [] = []
 justifyList (x:xs) =
@@ -87,20 +88,25 @@ justifyList (x:xs) =
     Nothing -> justifyList xs
     Just v -> v : justifyList xs
 
+-- Lookups looks up several keys and returns the found values.
 lookups :: Eq a => [a] -> [(a, b)] -> [b]
 lookups ks table = justifyList [lookup k table | k <- ks]
 
+-- Validsquare checks whether a square is valid among its peers. 
 validSquare :: (String, Int) -> [(String, Int)] -> Bool
 validSquare (sq, val) board
   | val == 0  = True
   | otherwise = val `notElem` lookups (getPeers sq) board
 
+-- Checks whether each square is valid on the board.
 validBoard :: [(String, Int)] -> Bool
 validBoard board = all (`validSquare` board) board
 
+-- Verifies whether the Sudoku is val
 verifySudoku :: String -> Bool
 verifySudoku = validUnits . validBoardNumbers . parseBoard
 
+-- Following four boardStrings are for a 4x4 Sudoku board
 consistent1 :: String
 consistent1 = "1234341221434321"
 
@@ -120,10 +126,12 @@ testVerifier = do
   print (verifySudoku consistentWithEmpty)
   print (verifySudoku inconsistentWithEmpty)
 
+-- Compares to lists and if any element is equal it skips it
 reduceList :: Eq a => [a] -> [a] -> [a]
 reduceList [] ys = []
 reduceList xs ys = [x | x <- xs, x `notElem` ys]
 
+--Checks whether a square is valid among its peers and returns it (if it exists)
 validSquareNumbers :: (String, Int) -> [(String, Int)] -> (String, [Int])
 validSquareNumbers (sq, v) board
   | v == 0 = (sq, reduceList [1..4] (lookups (getPeers sq) board))
@@ -133,6 +141,8 @@ validSquareNumbers (sq, v) board
 validBoardNumbers :: [(String, Int)] -> [(String, [Int])]
 validBoardNumbers board = map (`validSquareNumbers` board) board
 
+s :: String
+s = "1.3434..2143..21"
 b :: [(String, Int)]
 b = parseBoard "1.3434..2143..21"
 bn :: [(String, [Int])]
